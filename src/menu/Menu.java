@@ -18,13 +18,18 @@ public class Menu {
 
 	static void transferFunds(String userId, String amount) {
 		Double validatedAmount = Validators.validateAmount(amount);
-		Optional<User> userFound = userData.stream().filter(user -> user.getId().equals(userId)).findFirst();
+		Optional<User> userFound = userData.stream()
+		                                   .filter(user -> user.getId().equals(userId))
+		                                   .findFirst();
+
 		if (validatedAmount <= 0) {
 			promptError("amount must be greater than zero");
 		} else if (userFound.isPresent()) {
 			userFound.get().deposit(validatedAmount);
 			loggedUser.withdraw(validatedAmount);
 			promptFeedback("Transferred " + validatedAmount + " to " + userId);
+		} else {
+			promptError("Target user not found.");
 		}
 	}
 
@@ -41,13 +46,12 @@ public class Menu {
 		userId = scanner.nextLine().trim();
 	prompt("Password:");
 		password = scanner.nextLine();
-		User userFound = userData.stream()
+		Optional<User> userFound = userData.stream()
 		                         .filter(user1 -> user1.getId().equals(userId))
 		                         .findFirst()
-		                         .filter(user1 -> user1.checkPassword(password))
-		                         .get();
-		if (userFound != null) {
-			loggedUser = userFound;
+		                         .filter(user1 -> user1.checkPassword(password));
+		if (userFound.isPresent()) {
+			loggedUser = userFound.get();
 			loggedMenu();
 		} else {
 			promptError("Bad Credentials");
@@ -120,7 +124,9 @@ public class Menu {
 				contactNumber = Validators.validateContactNumber(scanner.nextLine());
 			} while (contactNumber == 0);
 			String userId;
-			List<String> ids = userData.stream().map(User::getId).toList();
+			List<String> ids = userData.stream()
+			                           .map(User::getId)
+			                           .toList();
 			do {
 				prompt("User Id: ");
 				userId = scanner.nextLine();
@@ -133,7 +139,7 @@ public class Menu {
 				} catch (RuntimeException e) {
 					System.out.println("Try again with different user id");
 				}
-			} while (userId.isEmpty() || ids.contains(userId));
+			} while (null == userId || userId.isEmpty() || ids.contains(userId));
 			String password;
 			do {
 				prompt("Password: 8 Characters With Lower, Upper & Special characters ");
@@ -177,37 +183,35 @@ public class Menu {
 						""");
 				option = scanner.nextLine();
 				switch (option) {
-					case "1":
+					case "1" -> {
 						prompt("Amount to deposit");
 						Double deposit =
 								loggedUser.deposit(Validators.validateAmount(scanner.nextLine()));
 						promptFeedback("You new balance is " + deposit);
-						break;
-					case "2":
+					}
+					case "2" -> {
 						prompt("Amount to withdraw");
 						Double withdraw =
 								loggedUser.withdraw(Double.parseDouble(String.valueOf(Validators.validateAmount(scanner.nextLine()))));
 						promptFeedback("You new balance is " + withdraw);
-						break;
-					case "3":
+					}
+					case "3" -> {
 						prompt("Id of the destination account");
 						String destinationAccountId = scanner.nextLine();
 						prompt("Amount to Transfer");
 						String amountToTransfer = scanner.nextLine();
 						transferFunds(destinationAccountId, amountToTransfer);
-						break;
-					case "4":
+					}
+					case "4" -> {
+						prompt("Last 5 transactions");
 						loggedUser.recentTransactions();
-						break;
-					case "5":
-						loggedUser.showInformation();
-						break;
-					case "6":
+					}
+					case "5" -> loggedUser.showInformation();
+					case "6" -> {
 						promptFeedback("Signing out");
 						loggedUser = null;
-						break;
-					default:
-						promptError("Not a valid option");
+					}
+					default -> promptError("Not a valid option");
 				}
 			} while (!option.equals("6"));
 		} catch (Exception e) {

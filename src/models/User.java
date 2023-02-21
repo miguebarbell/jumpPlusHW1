@@ -4,15 +4,16 @@ import menu.Colors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class User {
 	private final String name;
 	private final String address;
-	private Long contactNumber;
 	private final String id;
 	private final String password;
+	private final Long contactNumber;
 	private Double balance;
-	private List<Transaction> transactions = new ArrayList<>();
+	private final List<Transaction> transactions = new ArrayList<>();
 
 	public User(String name,
 	            String address,
@@ -57,20 +58,25 @@ public class User {
 	}
 
 	public void recentTransactions() {
-		transactions.stream()
-		            .limit(5)
-		            .forEach(transaction -> System.out.println(transaction.toString()));
+		IntStream
+				.range(0, transactions.size())
+				.filter(index -> transactions.size() - index <= 5)
+				.forEach(index -> System.out.println(transactions.get(index).toString()));
+//								.map(index -> transactions.get(index))
+//		transactions.stream()
+//                .limit(5)
+//                .forEach(transaction -> System.out.println(transaction.toString()));
 	}
 
 	public void showInformation() {
 		System.out.printf("""
-			\n%s
-				ID: %s
-				Name: %s
-				Address: %s
-				Contact Number: %s
-				Balance: %s
-				%s""", Colors.YELLOW, id, name, address, contactNumber, balance, Colors.RESET);
+				\n%s
+					ID: %s
+					Name: %s
+					Address: %s
+					Contact Number: %s
+					Balance: %s
+					%s""", Colors.YELLOW, id, name, address, contactNumber, balance, Colors.RESET);
 	}
 
 

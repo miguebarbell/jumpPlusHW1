@@ -32,13 +32,17 @@ public class Validators {
 	}
 
 	public static Double validateAmount(String amountToValidate) {
+		final boolean[] isDecimal = {false};
 		StringBuilder builder = new StringBuilder();
 		IntStream
 				.range(0, amountToValidate.length())
 				.forEach(index -> {
-					if (isDigit(amountToValidate.charAt(index))
-					    || amountToValidate.charAt(index) == '.'
-					    || amountToValidate.charAt(index) == '-') {
+					if (isDigit(amountToValidate.charAt(index))) {
+						builder.append(amountToValidate.charAt(index));
+					} else if (amountToValidate.charAt(index) == '-' && index == 0) {
+						builder.append(amountToValidate.charAt(index));
+					} else if (amountToValidate.charAt(index) == '.' && !isDecimal[0]) {
+						isDecimal[0] = true;
 						builder.append(amountToValidate.charAt(index));
 					}
 				});
