@@ -47,6 +47,7 @@ public class Validators {
 	}
 
 	public static boolean validatePassword(String password) {
-		return true;
+		String pattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=/\\.!\\(\\)])(?=\\S+$).{8,}";
+		return password.matches(pattern);
 	}
 }

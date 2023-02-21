@@ -1,12 +1,15 @@
 package menu;
 
 import helper.Validators;
+import models.CustomException;
 import models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+
+import static helper.Prompt.*;
 
 public class Menu {
 	static List<User> userData = new ArrayList<>();
@@ -17,27 +20,26 @@ public class Menu {
 		Double validatedAmount = Validators.validateAmount(amount);
 		Optional<User> userFound = userData.stream().filter(user -> user.getId().equals(userId)).findFirst();
 		if (validatedAmount <= 0) {
-			System.out.println(Colors.RED + "amount must be greater than zero" + Colors.RED);
+			promptError("amount must be greater than zero");
 		} else if (userFound.isPresent()) {
 			userFound.get().deposit(validatedAmount);
 			loggedUser.withdraw(validatedAmount);
-			System.out.println("Transferred " + validatedAmount + " to " + userId);
+			promptFeedback("Transferred " + validatedAmount + " to " + userId);
 		}
 	}
 
 	static void loggingMenu() {
 		String userId;
 		String password;
-		System.out.printf("""
-    
-				%s+---------------------+
+		promptHeader("""
+				    
+				+---------------------+
 				| Enter Login Details |
 				+---------------------+
-				
-			 %s""", Colors.BLUE, Colors.RESET);
-		System.out.printf("%sUser Id:%s\n", Colors.RESET, Colors.PURPLE);
+				""");
+	prompt("User Id:");
 		userId = scanner.nextLine().trim();
-		System.out.printf("%sPassword:%s\n", Colors.RESET, Colors.BLACK);
+	prompt("Password:");
 		password = scanner.nextLine();
 		User userFound = userData.stream()
 		                         .filter(user1 -> user1.getId().equals(userId))
@@ -48,7 +50,7 @@ public class Menu {
 			loggedUser = userFound;
 			loggedMenu();
 		} else {
-			System.out.println("Bad Credentials");
+			promptError("Bad Credentials");
 		}
 	}
 
@@ -57,77 +59,100 @@ public class Menu {
 		userData.add(new User("miguel", "usa", 16039331308L, "1", "pass", 100.0));
 		userData.add(new User("angel", "usa", 16039331308L, "2", "pass", 2000.0));
 
-
 		String option;
 		try {
 			do {
-				System.out.printf("""
-      
-						%s+---------------------------+
-						| DOLLARSBANK Welcomes You! |
-						+---------------------------+%s
+				promptHeader(
+						"""
+								      
+								+---------------------------+
+								| DOLLARSBANK Welcomes You! |
+								+---------------------------+
+								""");
+				System.out.println("""
 						1. Create New Account
 						2. Login
 						3. Exit.
-
-						%sEnter Choice (1,2 or 3) :
-						%s""", Colors.BLUE, Colors.RESET, Colors.GREEN, Colors.RESET);
+						""");
+				promptOptions("Enter Choice (1,2 or 3)");
 				option = scanner.nextLine();
 				switch (option) {
 					case "2" -> loggingMenu();
 					case "1" -> createUserMenu();
-					default -> System.out.println(Colors.RED + "Not a valid option" + Colors.RESET);
+					default -> promptError("Not a valid option");
 				}
 			} while (!option.equals("3"));
-			System.out.println("Bye!");
+			promptFeedback("Bye!");
 		} catch (NumberFormatException e) {
-			System.out.println("Invalid choice");
+			promptError("Invalid choice");
 		}
 	}
 
 	static void createUserMenu() {
 		try {
-			System.out.printf(
+			promptHeader(
 					"""
-       
-							%s+-------------------------------+
+							       
+							+-------------------------------+
 							| Enter Details For New Account |
 							+-------------------------------+
-							
-							%s""", Colors.BLUE, Colors.RESET);
+							""");
 			String name;
 			do {
-				System.out.printf("Customer Name: \n%s", Colors.YELLOW);
+				prompt("Customer Name: ");
 				name = scanner.nextLine();
+				try {
+					if (name.isBlank()) {
+						throw new CustomException("Name cannot be blank");
+					}
+				} catch (RuntimeException e) {
+					System.out.println("Try again");
+				}
 			} while (name.isBlank());
 			String address;
 			do {
-				System.out.printf("%sCustomer Address: \n%s", Colors.RESET, Colors.YELLOW);
+				prompt("Customer Address: ");
 				address = scanner.nextLine();
 			} while (address.isBlank());
 			long contactNumber;
 			do {
-				System.out.printf("%sCustomer Contact Number: \n%s", Colors.RESET, Colors.YELLOW);
+				prompt("Customer Contact Number: ");
 				contactNumber = Validators.validateContactNumber(scanner.nextLine());
 			} while (contactNumber == 0);
 			String userId;
+			List<String> ids = userData.stream().map(User::getId).toList();
 			do {
-				System.out.printf("%sUser Id: \n%s", Colors.RESET, Colors.YELLOW);
+				prompt("User Id: ");
 				userId = scanner.nextLine();
-			} while (userId.isBlank());
+				try {
+					if (ids.contains(userId)) {
+						throw new CustomException("User ID already exists");
+					} else if (null == userId || userId.equals("") || userId.isBlank()) {
+						throw new CustomException("User ID cannot be empty");
+					}
+				} catch (RuntimeException e) {
+					System.out.println("Try again with different user id");
+				}
+			} while (userId.isEmpty() || ids.contains(userId));
 			String password;
 			do {
-				System.out.printf("%sPassword: 8 Characters With Lower, Upper & Special characters \n%s", Colors.RESET,
-						Colors.YELLOW);
+				prompt("Password: 8 Characters With Lower, Upper & Special characters ");
 				password = scanner.nextLine();
+				try {
+					if (!Validators.validatePassword(password)) {
+						throw new CustomException("Password doesn't meet the security requirements");
+					}
+				} catch (RuntimeException e) {
+					System.out.println("try again please");
+				}
 			} while (!Validators.validatePassword(password));
 			Double amount;
-			System.out.printf("%sInitial Deposit Amount: \n%s", Colors.RESET, Colors.YELLOW);
+			prompt("Initial Deposit Amount: ");
 			amount = Validators.validateAmount(scanner.nextLine());
 			User newUser = new User(name, address, contactNumber, userId, password, amount);
 			userData.add(newUser);
 		} catch (Exception e) {
-			System.out.println("Error");
+			promptError("Error");
 		}
 	}
 
@@ -136,37 +161,38 @@ public class Menu {
 		try {
 			String option;
 			do {
-				System.out.printf("""
-      
-						%s+---------------------+
+				promptHeader("""
+						      
+						+---------------------+
 						| WELCOME Customer!!! |
 						+---------------------+
-						
-					 %s""", Colors.BLUE, Colors.RESET);
-				System.out.println("1. Deposit Amount");
-				System.out.println("2. Withdraw Amount");
-				System.out.println("3. Funds Transfer");
-				System.out.println("4. View 5 Recent Transactions");
-				System.out.println("5. Display Customer Information");
-				System.out.println("6. Sign Out");
+						""");
+				System.out.println("""
+						1. Deposit Amount
+						2. Withdraw Amount
+						3. Funds Transfer
+						4. View 5 Recent Transactions
+						5. Display Customer Information
+						6. Sign Out
+						""");
 				option = scanner.nextLine();
 				switch (option) {
 					case "1":
-						System.out.println("Amount to deposit");
+						prompt("Amount to deposit");
 						Double deposit =
-						loggedUser.deposit(Validators.validateAmount(scanner.nextLine()));
-						System.out.println("You new balance is " + deposit);
+								loggedUser.deposit(Validators.validateAmount(scanner.nextLine()));
+						promptFeedback("You new balance is " + deposit);
 						break;
 					case "2":
-						System.out.println("Amount to withdraw");
+						prompt("Amount to withdraw");
 						Double withdraw =
 								loggedUser.withdraw(Double.parseDouble(String.valueOf(Validators.validateAmount(scanner.nextLine()))));
-						System.out.println("You new balance is " + withdraw);
+						promptFeedback("You new balance is " + withdraw);
 						break;
 					case "3":
-						System.out.println("Id of the destination account");
+						prompt("Id of the destination account");
 						String destinationAccountId = scanner.nextLine();
-						System.out.println("Amount to Transfer");
+						prompt("Amount to Transfer");
 						String amountToTransfer = scanner.nextLine();
 						transferFunds(destinationAccountId, amountToTransfer);
 						break;
@@ -177,11 +203,11 @@ public class Menu {
 						loggedUser.showInformation();
 						break;
 					case "6":
-						System.out.println("Signing out");
+						promptFeedback("Signing out");
 						loggedUser = null;
 						break;
 					default:
-						System.out.println("Not a valid option");
+						promptError("Not a valid option");
 				}
 			} while (!option.equals("6"));
 		} catch (Exception e) {
