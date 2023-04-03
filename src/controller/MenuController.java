@@ -1,5 +1,6 @@
-package menu;
+package controller;
 
+import helper.PersistenceManager;
 import helper.Validators;
 import models.CustomException;
 import models.User;
@@ -11,7 +12,7 @@ import java.util.Scanner;
 
 import static helper.Prompt.*;
 
-public class Menu {
+public class MenuController {
 	static List<User> userData = new ArrayList<>();
 	static Scanner scanner = new Scanner(System.in);
 	private static User loggedUser;
@@ -42,14 +43,14 @@ public class Menu {
 				| Enter Login Details |
 				+---------------------+
 				""");
-	prompt("User Id:");
+		prompt("User Id:");
 		userId = scanner.nextLine().trim();
-	prompt("Password:");
+		prompt("Password:");
 		password = scanner.nextLine();
 		Optional<User> userFound = userData.stream()
-		                         .filter(user1 -> user1.getId().equals(userId))
-		                         .findFirst()
-		                         .filter(user1 -> user1.checkPassword(password));
+		                                   .filter(user1 -> user1.getId().equals(userId))
+		                                   .findFirst()
+		                                   .filter(user1 -> user1.checkPassword(password));
 		if (userFound.isPresent()) {
 			loggedUser = userFound.get();
 			loggedMenu();
@@ -59,10 +60,13 @@ public class Menu {
 	}
 
 	static public void welcomeMenu() {
+		if (PersistenceManager.loadData(userData)) {
 
-		userData.add(new User("miguel", "usa", 16039331308L, "1", "pass", 100.0));
-		userData.add(new User("angel", "usa", 16039331308L, "2", "pass", 2000.0));
-
+		} else {
+			userData.add(new User("miguel", "usa", 16039331308L, "1", "pass", 100.0));
+			userData.add(new User("angel", "usa", 16039331308L, "2", "pass", 2000.0));
+			System.out.println("PersistenceManager.updateFile(userData) = " + PersistenceManager.updateFile(userData));
+		}
 		String option;
 		try {
 			do {

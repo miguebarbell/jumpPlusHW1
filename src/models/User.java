@@ -1,6 +1,6 @@
 package models;
 
-import menu.Colors;
+import helper.Colors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,11 @@ public class User {
 	private final String password;
 	private final Long contactNumber;
 	private Double balance;
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
 	private final List<Transaction> transactions = new ArrayList<>();
 
 	public User(String name,
@@ -40,6 +45,26 @@ public class User {
 		return password.equals(pass);
 	}
 
+
+	public String getName() {
+		return name;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public Long getContactNumber() {
+		return contactNumber;
+	}
+
+	public Double getBalance() {
+		return balance;
+	}
 
 	public String getId() {
 		return id;

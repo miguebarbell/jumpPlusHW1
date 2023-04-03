@@ -1,6 +1,6 @@
 package models;
 
-import menu.Colors;
+import helper.Colors;
 
 public class CustomException extends RuntimeException {
 	public CustomException(String message) {

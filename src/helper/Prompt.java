@@ -1,7 +1,5 @@
 package helper;
 
-import menu.Colors;
-
 public class Prompt {
 	private static void commonPrompt(String message, String initialColor, String finalColor) {
 		System.out.printf("%s" + message + "\n%s", initialColor, finalColor);

@@ -1,6 +1,6 @@
 package models;
 
-import menu.Colors;
+import helper.Colors;
 
 import java.time.LocalDateTime;
 
@@ -8,6 +8,18 @@ public class Transaction {
 	String type;
 	Double amount;
 	LocalDateTime date;
+
+	public String getType() {
+		return type;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public LocalDateTime getDate() {
+		return date;
+	}
 
 	public Transaction(String type, Double amount) {
 		this.type = type;
