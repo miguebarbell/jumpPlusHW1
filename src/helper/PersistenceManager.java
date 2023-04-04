@@ -53,7 +53,7 @@ public class PersistenceManager {
 		} catch (IOException e) {
 			return false;
 		}
-		return loadAccountData && loadTransactionData;
+		return (loadAccountData && loadTransactionData);
 	}
 
 	public static boolean updateAccount(List<User> userData) {
