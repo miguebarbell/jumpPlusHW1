@@ -25,6 +25,7 @@ public class PersistenceManager {
 						splitedLine[0],
 						splitedLine[5],
 						Double.parseDouble(splitedLine[4]));
+				newUser.setPassword(splitedLine[5]);
 				userData.add(newUser);
 			});
 			loadAccountData = true;

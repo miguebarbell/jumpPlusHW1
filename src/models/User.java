@@ -1,6 +1,7 @@
 package models;
 
 import helper.Colors;
+import helper.Hasher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +11,8 @@ public class User {
 	private final String name;
 	private final String address;
 	private final String id;
-	private final String password;
-	private final Long contactNumber;
-	private Double balance;
 
-	public List<Transaction> getTransactions() {
-		return transactions;
-	}
-
-	private final List<Transaction> transactions = new ArrayList<>();
+	private String password;
 
 	public User(String name,
 	            String address,
@@ -31,7 +25,7 @@ public class User {
 		this.address = address;
 		this.contactNumber = contactNumber;
 		this.id = id;
-		this.password = password;
+		this.password = Hasher.hasher(password);
 		if (balance < 0) {
 			transactions.add(new Transaction("withdraw", balance));
 		} else if (balance > 0) {
@@ -39,9 +33,22 @@ public class User {
 		}
 		this.balance = balance;
 	}
+	private final Long contactNumber;
+	private Double balance;
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	private final List<Transaction> transactions = new ArrayList<>();
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public boolean checkPassword(String pass) {
-		return password.equals(pass);
+		return Hasher.compare(pass, password);
+//		return password.equals(pass);
 	}
 
 
