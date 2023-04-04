@@ -163,6 +163,7 @@ public class MenuController {
 			amount = Validators.validateAmount(scanner.nextLine());
 			User newUser = new User(name, address, contactNumber, userId, password, amount);
 			userData.add(newUser);
+			PersistenceManager.updateAccounts(newUser);
 		} catch (Exception e) {
 			promptError("Error");
 		}

@@ -83,6 +83,25 @@ public class PersistenceManager {
 		}
 	}
 
-// TODO: overload updateTransactions to only append one transaction
+	public static boolean updateTransactions(String userId, Transaction transaction) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(transactionFileName, true))) {
+			writer.write("%s,%s,%s,%s\n".formatted(userId, transaction.getType(), transaction.getAmount(),
+					transaction.getDate()));
+		} catch (IOException e) {
+			System.out.println("Could not write transaction to file");
+			return false;
+		}
+		return true;
+	}
 
+	public static boolean updateAccounts(User user) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(accountFileName, true))) {
+			writer.write("%s,%s,%s,%s,%s,%s\n".formatted(user.getId(), user.getName(), user.getContactNumber(), user.getAddress(), user.getBalance(), user.getPassword()));
+		} catch (IOException e) {
+			System.out.println("Could not write transaction to file");
+			return false;
+		}
+		user.getTransactions().forEach(transaction -> updateTransactions(user.getId(),transaction));
+		return true;
+	}
 }

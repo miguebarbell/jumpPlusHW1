@@ -40,7 +40,6 @@ public class User {
 		this.balance = balance;
 	}
 
-
 	public boolean checkPassword(String pass) {
 		return password.equals(pass);
 	}
