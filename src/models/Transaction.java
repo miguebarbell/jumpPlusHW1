@@ -7,7 +7,18 @@ import java.time.LocalDateTime;
 public class Transaction {
 	String type;
 	Double amount;
+
+	public Transaction(String type, Double amount) {
+		this.type = type;
+		this.amount = amount;
+		this.date = LocalDateTime.now();
+	}
+
 	LocalDateTime date;
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
 
 	public String getType() {
 		return type;
@@ -19,12 +30,6 @@ public class Transaction {
 
 	public LocalDateTime getDate() {
 		return date;
-	}
-
-	public Transaction(String type, Double amount) {
-		this.type = type;
-		this.amount = amount;
-		this.date = LocalDateTime.now();
 	}
 
 	String datePrettified(LocalDateTime date) {

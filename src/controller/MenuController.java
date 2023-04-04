@@ -61,11 +61,13 @@ public class MenuController {
 
 	static public void welcomeMenu() {
 		if (PersistenceManager.loadData(userData)) {
-
+			System.out.println("loading data from files");
 		} else {
+			System.out.println("creating new users, not loading data from files");
 			userData.add(new User("miguel", "usa", 16039331308L, "1", "pass", 100.0));
 			userData.add(new User("angel", "usa", 16039331308L, "2", "pass", 2000.0));
-			System.out.println("PersistenceManager.updateFile(userData) = " + PersistenceManager.updateFile(userData));
+			PersistenceManager.updateAccount(userData);
+			PersistenceManager.updateTransactions(userData);
 		}
 		String option;
 		try {

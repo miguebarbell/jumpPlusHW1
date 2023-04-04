@@ -70,6 +70,10 @@ public class User {
 		return id;
 	}
 
+	public void addTransaction(Transaction transaction) {
+		transactions.add(transaction);
+	}
+
 	public Double withdraw(Double amount) {
 		this.balance -= amount;
 		transactions.add(new Transaction("withdraw", amount));
