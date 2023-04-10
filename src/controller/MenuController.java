@@ -61,9 +61,9 @@ public class MenuController {
 
 	static public void welcomeMenu() {
 		if (PersistenceManager.loadData(userData)) {
-			System.out.println("loading data from files");
+			promptFeedback("Loading data from files");
 		} else {
-			System.out.println("creating new users, not loading data from files");
+			promptFeedback("Creating new users");
 			userData.add(new User("miguel", "usa", 16039331308L, "1", "pass", 100.0));
 			userData.add(new User("angel", "usa", 16039331308L, "2", "pass", 2000.0));
 			PersistenceManager.updateAccount(userData);
@@ -89,10 +89,11 @@ public class MenuController {
 				switch (option) {
 					case "2" -> loggingMenu();
 					case "1" -> createUserMenu();
+					case "3" -> promptFeedback("Bye!");
 					default -> promptError("Not a valid option");
 				}
 			} while (!option.equals("3"));
-			promptFeedback("Bye!");
+			System.exit(0);
 		} catch (NumberFormatException e) {
 			promptError("Invalid choice");
 		}
@@ -171,15 +172,20 @@ public class MenuController {
 
 
 	public static void loggedMenu() {
+
 		try {
 			String option;
 			do {
 				promptHeader("""
 						      
-						+---------------------+
-						| WELCOME Customer!!! |
-						+---------------------+
-						""");
+						+---------%s----+
+						| WELCOME %s!!! |
+						+---------%s----+
+						""".formatted(
+						Converter.replaceTo(loggedUser.getName(), '-'),
+						loggedUser.getName(),
+						Converter.replaceTo(loggedUser.getName(), '-')
+				));
 				System.out.println("""
 						1. Deposit Amount
 						2. Withdraw Amount
