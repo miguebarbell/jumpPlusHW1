@@ -6,7 +6,7 @@ public class Converter {
 	public static String replaceTo(String string, char replacement) {
 		return string
 				.chars()
-				.mapToObj(charToString -> "-")
+				.mapToObj(charToString -> String.valueOf(replacement))
 				.collect(Collectors.joining(""));
 	}
 }
