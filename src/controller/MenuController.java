@@ -160,9 +160,21 @@ public class MenuController {
 					System.out.println("try again please");
 				}
 			} while (!Validators.validatePassword(password));
-			Double amount;
-			prompt("Initial Deposit Amount: ");
-			amount = Validators.validateAmount(scanner.nextLine());
+			Double amount = null;
+			do {
+				prompt("Initial Deposit Amount: ");
+				try {
+					amount = Validators.validateAmount(scanner.nextLine());
+					if (amount < 0) {
+						throw new CustomException("Initial Amount should be greater than or equal to 0");
+					}
+				} catch (CustomException e) {
+					System.out.println("try again please");
+				} catch (NumberFormatException e) {
+					promptError("Not a valid deposit amount");
+					System.out.println("try again please");
+				}
+			} while (amount < 0);
 			User newUser = new User(name, address, contactNumber, userId, password, amount);
 			userData.add(newUser);
 			PersistenceManager.updateAccounts(newUser);
