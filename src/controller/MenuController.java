@@ -204,10 +204,16 @@ public class MenuController {
 						promptFeedback("You new balance is " + deposit);
 					}
 					case "2" -> {
+
 						prompt("Amount to withdraw");
-						Double withdraw =
-								loggedUser.withdraw(Double.parseDouble(String.valueOf(Validators.validateAmount(scanner.nextLine()))));
-						promptFeedback("You new balance is " + withdraw);
+						try {
+							Double withdraw =
+									loggedUser.withdraw(Double.parseDouble(String.valueOf(Validators.validateAmount(scanner.nextLine()))));
+							promptFeedback("You new balance is " + withdraw);
+						} catch (CustomException e) {
+							promptFeedback("Your balance is: "+loggedUser.getBalance());
+						}
+
 					}
 					case "3" -> {
 						prompt("Id of the destination account");

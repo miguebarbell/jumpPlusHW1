@@ -48,7 +48,6 @@ public class User {
 
 	public boolean checkPassword(String pass) {
 		return Hasher.compare(pass, password);
-//		return password.equals(pass);
 	}
 
 
@@ -81,6 +80,9 @@ public class User {
 	}
 
 	public Double withdraw(Double amount) {
+		if (amount > this.balance) {
+			throw new CustomException("Not enough money to make this operation");
+		}
 		this.balance -= amount;
 		transactions.add(new Transaction("withdraw", amount));
 		return this.balance;
@@ -97,10 +99,6 @@ public class User {
 				.range(0, transactions.size())
 				.filter(index -> transactions.size() - index <= 5)
 				.forEach(index -> System.out.println(transactions.get(index).toString()));
-//								.map(index -> transactions.get(index))
-//		transactions.stream()
-//                .limit(5)
-//                .forEach(transaction -> System.out.println(transaction.toString()));
 	}
 
 	public void showInformation() {
